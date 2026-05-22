@@ -1,41 +1,50 @@
-name: "CI/CD OpenAPI Pipeline"
+# Nome exibido na aba "Actions" do GitHub
+name: CI/CD — Minha API
 
+# QUANDO executar: a cada push na main ou disparo manual
 on:
   push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+    branches: [main]
+  workflow_dispatch:   # permite rodar manualmente
 
 jobs:
-  lint-and-document:
-    runs-on: ubuntu-latest
+
+  # ─── JOB 1: Validar o contrato ───
+  validar:
+    runs-on: ubuntu-latest   # VM Linux gratuita
 
     steps:
-      - name: "1. Baixar o código do repositório"
+      - name: Baixar o código
         uses: actions/checkout@v4
 
-      - name: "2. Instalar o Node.js"
+      - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: "3. Instalar as ferramentas de CLI"
-        run: |
-          npm install -g @stoplight/spectral-cli @redocly/cli
+      # Se o Spectral encontrar erros → pipeline PARA!
+      - name: Validar OpenAPI com Spectral
+        run: npx --yes @stoplight/spectral-cli@6 lint openapi.yaml
 
-      - name: "4. Rodar o Linter (Spectral)"
-        run: |
-          spectral lint openapi.yaml --ruleset oas3
+  # ─── JOB 2: Publicar documentação ───
+  # Só roda se o job "validar" passou!
+  publicar-docs:
+    needs: validar
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
-      - name: "5. Gerar Documentação HTML (Redoc)"
-        if: success()
-        run: |
-          redocly build-docs openapi.yaml -o index.html
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
 
-      - name: "6. Publicar no GitHub Pages"
-        if: success()
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Gerar HTML com Redoc
+        run: |
+          mkdir -p docs
+          npx --yes @redocly/cli build-docs openapi.yaml --output docs/index.html
+
+      - name: Publicar no GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          publish_files: index.html
+          publish_dir: ./docs
