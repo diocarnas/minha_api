@@ -25,16 +25,17 @@ jobs:
 
       - name: "4. Rodar o Linter (Spectral)"
         run: |
-          spectral lint openapi.yml --ruleset oas3
+          spectral lint openapi.yaml --ruleset oas3
 
       - name: "5. Gerar Documentação HTML (Redoc)"
         if: success()
         run: |
-          redocly build-docs openapi.yml -o index.html
+          redocly build-docs openapi.yaml -o index.html
 
-      - name: "6. Upload do HTML como Artefato"
+      - name: "6. Publicar no GitHub Pages"
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          name: api-documentation
-          path: index.html
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_files: index.html
