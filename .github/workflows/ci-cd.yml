@@ -1,0 +1,40 @@
+name: "CI/CD OpenAPI Pipeline"
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  lint-and-document:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "1. Baixar o código do repositório"
+        uses: actions/checkout@v4
+
+      - name: "2. Instalar o Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: "3. Instalar as ferramentas de CLI"
+        run: |
+          npm install -g @stoplight/spectral-cli @redocly/cli
+
+      - name: "4. Rodar o Linter (Spectral)"
+        run: |
+          spectral lint openapi.yml --ruleset oas3
+
+      - name: "5. Gerar Documentação HTML (Redoc)"
+        if: success()
+        run: |
+          redocly build-docs openapi.yml -o index.html
+
+      - name: "6. Upload do HTML como Artefato"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-documentation
+          path: index.html
