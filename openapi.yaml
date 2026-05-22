@@ -11,7 +11,8 @@ paths:
     get:
       summary: "Listar quadras disponíveis"
       operationId: "listCourts"
-      tags: ["Quadras"]
+      tags:
+        - "Quadras"
       responses:
         "200":
           description: "Lista de quadras retornada com sucesso"
@@ -22,14 +23,16 @@ paths:
     get:
       summary: "Listar todos os agendamentos"
       operationId: "listReservations"
-      tags: ["Agendamentos"]
+      tags:
+        - "Agendamentos"
       responses:
         "200":
           description: "Lista de agendamentos cadastrados"
     post:
       summary: "Criar um novo agendamento"
       operationId: "createReservation"
-      tags: ["Agendamentos"]
+      tags:
+        - "Agendamentos"
       requestBody:
         required: true
         content:
@@ -46,13 +49,14 @@ paths:
     get:
       summary: "Buscar detalhes de um agendamento"
       operationId: "getReservation"
-      tags: ["Agendamentos"]
+      tags:
+        - "Agendamentos"
       parameters:
-        - name: id
-          in: path
+        - name: "id"
+          in: "path"
           required: true
           schema:
-            type: string
+            type: "string"
       responses:
         "200":
           description: "Agendamento encontrado"
@@ -61,13 +65,14 @@ paths:
     patch:
       summary: "Modificar horário ou status do agendamento"
       operationId: "updateReservation"
-      tags: ["Agendamentos"]
+      tags:
+        - "Agendamentos"
       parameters:
-        - name: id
-          in: path
+        - name: "id"
+          in: "path"
           required: true
           schema:
-            type: string
+            type: "string"
       requestBody:
         required: true
         content:
@@ -84,52 +89,60 @@ paths:
     delete:
       summary: "Cancelar um agendamento"
       operationId: "cancelReservation"
-      tags: ["Agendamentos"]
+      tags:
+        - "Agendamentos"
       parameters:
-        - name: id
-          in: path
+        - name: "id"
+          in: "path"
           required: true
           schema:
-            type: string
+            type: "string"
       responses:
         "204":
-          description: "Agendamento cancelado com sucesso (sem conteúdo de retorno)"
+          description: "Agendamento cancelado com sucesso"
         "404":
           description: "Agendamento não encontrado"
 
 components:
   schemas:
     NovoAgendamento:
-      type: object
-      required: [quadraId, data, horarioInicio, horarioFim, nomeCliente]
+      type: "object"
+      required:
+        - "quadraId"
+        - "data"
+        - "horarioInicio"
+        - "horarioFim"
+        - "nomeCliente"
       properties:
         quadraId:
-          type: string
+          type: "string"
           example: "quadra-soccer-01"
         data:
-          type: string
-          format: date
+          type: "string"
+          format: "date"
           example: "2026-05-25"
         horarioInicio:
-          type: string
+          type: "string"
           example: "19:00"
         horarioFim:
-          type: string
+          type: "string"
           example: "20:00"
         nomeCliente:
-          type: string
+          type: "string"
           example: "Carlos Silva"
           
     AtualizarAgendamento:
-      type: object
+      type: "object"
       properties:
         horarioInicio:
-          type: string
+          type: "string"
           example: "20:00"
         horarioFim:
-          type: string
+          type: "string"
           example: "21:00"
         status:
-          type: string
-          enum: ["confirmado", "cancelado"]
+          type: "string"
+          enum:
+            - "confirmado"
+            - "cancelado"
           example: "cancelado"
