@@ -20,7 +20,7 @@ jobs:
           node-version: '20'
 
       - name: Validar OpenAPI com Spectral
-        run: npx --yes @stoplight/spectral-cli@6 lint openapi.yaml --ruleset https://unpkg.com/@stoplight/spectral-rulesets/dist/oas3.js
+        run: npx --yes @stoplight/spectral-cli@6 lint openapi.yaml
 
   publicar-docs:
     needs: validar
