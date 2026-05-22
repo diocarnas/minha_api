@@ -17,7 +17,7 @@ jobs:
 
       # Ajustado para @v0 (versão oficial suportada pelo GitHub)
       - name: Validar OpenAPI com Action Oficial
-        uses: stoplightio/spectral-action@v1
+        uses: stoplightio/spectral-action@v0
         with:
           file_glob: openapi.yaml
 
